@@ -4,7 +4,7 @@ This project explores **language modeling for low-resource languages**, starting
 It uses **Kedro pipelines** to make experiments reproducible, comparable, and easy to extend.  
 
 Accompanying blog series:  
-👉 [Read the blog](https://your-blog-link.com)  
+👉 [Read the blog](https://isi-xhosa-blog.vercel.app/)  
 
 ---
 
