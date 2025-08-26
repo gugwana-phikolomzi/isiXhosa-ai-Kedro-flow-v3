@@ -1,0 +1,58 @@
+# Auto-generated catalog for model A5
+
+# --- Input corpus ---
+model_A5_raw_corpus:
+  type: text.TextDataSet
+  filepath: data/01_raw/input.txt
+
+# --- Intermediates ---
+model_A5_corpus_text:
+  type: MemoryDataSet
+
+model_A5_tokenizer_spec:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_A5/tokenizer_spec.json
+
+model_A5_char_vocab:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_A5/char_vocab.json
+
+model_A5_encoded_corpus:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_A5/encoded_corpus.pkl
+
+# --- Train/Val splits ---
+model_A5_train_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_A5/train_tensor.pkl
+
+model_A5_val_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_A5/val_tensor.pkl
+
+# --- Trained outputs (final) ---
+model_A5_state_dict:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/model_A5/state_dict.pt
+  versioned: true
+
+model_A5_tokenizer_spec_saved:
+  type: json.JSONDataSet
+  filepath: data/06_models/model_A5/tokenizer_spec.json
+  versioned: true
+
+# --- Model outputs ---
+model_A5_prompted_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_A5/prompted_samples.json
+  versioned: true
+
+model_A5_report:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_A5/report.json
+  versioned: true
+
+model_A5_metadata:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_A5/metadata.json
+  versioned: true

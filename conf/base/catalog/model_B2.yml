@@ -1,0 +1,58 @@
+# Auto-generated catalog for model B2
+
+# --- Input corpus ---
+model_B2_raw_corpus:
+  type: text.TextDataSet
+  filepath: data/01_raw/input.txt
+
+# --- Intermediates ---
+model_B2_corpus_text:
+  type: MemoryDataSet
+
+model_B2_tokenizer_spec:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B2/tokenizer_spec.json
+
+model_B2_char_vocab:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B2/char_vocab.json
+
+model_B2_encoded_corpus:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_B2/encoded_corpus.pkl
+
+# --- Train/Val splits ---
+model_B2_train_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B2/train_tensor.pkl
+
+model_B2_val_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B2/val_tensor.pkl
+
+# --- Trained outputs (final) ---
+model_B2_state_dict:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/model_B2/state_dict.pt
+  versioned: true
+
+model_B2_tokenizer_spec_saved:
+  type: json.JSONDataSet
+  filepath: data/06_models/model_B2/tokenizer_spec.json
+  versioned: true
+
+# --- Model outputs ---
+model_B2_prompted_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_B2/prompted_samples.json
+  versioned: true
+
+model_B2_report:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B2/report.json
+  versioned: true
+
+model_B2_metadata:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B2/metadata.json
+  versioned: true

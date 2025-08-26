@@ -1,0 +1,58 @@
+# Auto-generated catalog for model A1
+
+# --- Input corpus ---
+model_A1_raw_corpus:
+  type: text.TextDataSet
+  filepath: data/01_raw/input.txt
+
+# --- Intermediates ---
+model_A1_corpus_text:
+  type: MemoryDataSet
+
+model_A1_tokenizer_spec:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_A1/tokenizer_spec.json
+
+model_A1_char_vocab:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_A1/char_vocab.json
+
+model_A1_encoded_corpus:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_A1/encoded_corpus.pkl
+
+# --- Train/Val splits ---
+model_A1_train_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_A1/train_tensor.pkl
+
+model_A1_val_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_A1/val_tensor.pkl
+
+# --- Trained outputs (final) ---
+model_A1_state_dict:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/model_A1/state_dict.pt
+  versioned: true
+
+model_A1_tokenizer_spec_saved:
+  type: json.JSONDataSet
+  filepath: data/06_models/model_A1/tokenizer_spec.json
+  versioned: true
+
+# --- Model outputs ---
+model_A1_prompted_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_A1/prompted_samples.json
+  versioned: true
+
+model_A1_report:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_A1/report.json
+  versioned: true
+
+model_A1_metadata:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_A1/metadata.json
+  versioned: true

@@ -1,0 +1,58 @@
+# Auto-generated catalog for model A4
+
+# --- Input corpus ---
+model_A4_raw_corpus:
+  type: text.TextDataSet
+  filepath: data/01_raw/input.txt
+
+# --- Intermediates ---
+model_A4_corpus_text:
+  type: MemoryDataSet
+
+model_A4_tokenizer_spec:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_A4/tokenizer_spec.json
+
+model_A4_char_vocab:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_A4/char_vocab.json
+
+model_A4_encoded_corpus:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_A4/encoded_corpus.pkl
+
+# --- Train/Val splits ---
+model_A4_train_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_A4/train_tensor.pkl
+
+model_A4_val_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_A4/val_tensor.pkl
+
+# --- Trained outputs (final) ---
+model_A4_state_dict:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/model_A4/state_dict.pt
+  versioned: true
+
+model_A4_tokenizer_spec_saved:
+  type: json.JSONDataSet
+  filepath: data/06_models/model_A4/tokenizer_spec.json
+  versioned: true
+
+# --- Model outputs ---
+model_A4_prompted_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_A4/prompted_samples.json
+  versioned: true
+
+model_A4_report:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_A4/report.json
+  versioned: true
+
+model_A4_metadata:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_A4/metadata.json
+  versioned: true

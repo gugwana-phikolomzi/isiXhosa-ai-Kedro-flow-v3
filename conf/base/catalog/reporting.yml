@@ -1,0 +1,16 @@
+# optional consolidated CSV for debugging
+reporting.metrics_consolidated:
+  type: pandas.CSVDataset
+  filepath: data/08_reporting/_consolidated_metrics.csv
+  save_args:
+    index: false
+
+# dummy sinks so Kedro resolves node outputs (we save PNGs ourselves)
+val_loss_plot_path:
+  type: MemoryDataSet
+size_vs_ppl_plot_path:
+  type: MemoryDataSet
+ema_vs_nonema_plot_path:
+  type: MemoryDataSet
+steps_saved_plot_path:
+  type: MemoryDataSet
