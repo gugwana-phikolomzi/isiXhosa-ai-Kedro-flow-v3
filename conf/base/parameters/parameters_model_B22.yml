@@ -1,0 +1,59 @@
+# This is a boilerplate parameters config generated for pipeline 'model_B21'
+# using Kedro 0.18.14.
+#
+# Documentation for this file format can be found in "Parameters"
+# Link: https://docs.kedro.org/en/0.18.14/configuration/parameters.html
+model_B22:
+  experiment_id: "B22"
+  tokenizer: { type: "byte", add_special_tokens: true }
+  train_frac: 0.9
+  block_size: 192
+
+  n_layer: 4
+  n_head: 6
+  n_embd: 384
+  dropout: 0.1
+
+  batch_size: 1
+  grad_accum_steps: 8
+  max_iters: 20000
+  target_total_steps: null
+
+  eval_interval: 250
+  eval_iters: 40
+  sample_tokens: 150
+  sample_prompts: ["Molo ", "Ulwimi lwesiXhosa "]
+
+  learning_rate: 0.0006
+  weight_decay: 0.10
+  grad_clip_norm: 1.0
+  adam_beta2: 0.95
+  adam_eps: 1.0e-8
+  no_decay_patterns: ["bias","LayerNorm.weight","norm.weight","embedding","emb.weight"]
+
+  ema:
+    enabled: true
+    decay: 0.999
+    start_step: 1000
+    eval_with_ema: true
+
+  lr_schedule: "cosine"
+  warmup_steps: 200
+  min_lr: 0.00001
+
+  device_auto_cuda: false
+  torch_threads: 6
+  checkpoint_interval: 500
+  checkpoint_dir: "data/06_models/B22/checkpoints"
+  checkpoint_prefix: "B22"
+
+  resume: { enabled: false, path: null }
+
+  metrics_jsonl_path: "data/08_reporting/B22/metrics.jsonl"
+  metrics_csv_path:  "data/08_reporting/B22/metrics.csv"
+
+  early_stopping: { enabled: true, patience_evals: 5, min_improve_pct: 1.0, min_delta_abs: 0.0 }
+  seed: 1337
+
+  corpus_format: "jsonl"
+  eval_strip_first_line: true

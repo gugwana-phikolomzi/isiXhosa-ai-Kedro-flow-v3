@@ -1,30 +1,18 @@
 reporting:
-  include_experiments: ["A0", "A1", "A3", "A7", "B2", "C1"]
+  include_experiments: ["B2", "B21", "B22"]
   max_steps: 20000
   metrics_root: "data/08_reporting"
 
   approx_params:
-    A0: 3300000
-    A1: 3300000
-    A2: 3300000
-    A3: 3300000
-    A4: 3300000
-    A5: 3300000
-    A6: 3300000
-    A7: 3300000
-    B0: 7200000
-    B1: 7200000
-    B2: 7200000
-    C0: 12700000
-    C1: 12700000
+    B2:  7200000
+    B21: 7200000
+    B22: 7200000
 
-  ema_pairs:
-    - ["A3", "A7"]
-    - ["B1", "B2"]
-    - ["C0", "C1"]
+  # No non-EMA vs EMA pairs today; leave empty so the plot shows "No valid EMA pairs".
+  ema_pairs: []
 
   output_paths:
-    val_loss:        "data/08_reporting/plots/val_loss_vs_steps.png"
-    size_vs_ppl:     "data/08_reporting/plots/size_vs_ppl.png"
-    ema_vs_non_ema:  "data/08_reporting/plots/ema_vs_nonema.png"
-    steps_saved:     "data/08_reporting/plots/steps_saved.png"
+    val_loss:        "data/08_reporting/plots/B2+/val_loss_vs_steps.png"
+    size_vs_ppl:     "data/08_reporting/plots/B2+/size_vs_ppl.png"
+    ema_vs_non_ema:  "data/08_reporting/plots/B2+/ema_vs_nonema.png"
+    steps_saved:     "data/08_reporting/plots/B2+/steps_saved.png"

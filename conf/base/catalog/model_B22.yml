@@ -1,0 +1,69 @@
+# ===============================
+# Catalog for model B22 (ALL CAPS)
+# ===============================
+
+# --- Input corpus (from dataset_prep_reclean) ---
+model_B22_raw_corpus:
+  type: text.TextDataSet
+  filepath: data/01_raw/b2.2_combined_allcaps.jsonl
+
+# --- Intermediates ---
+model_B22_corpus_text:
+  type: MemoryDataSet
+
+model_B22_tokenizer_spec:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B22/tokenizer_spec.json
+
+model_B22_char_vocab:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B22/char_vocab.json
+
+model_B22_encoded_corpus:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_B22/encoded_corpus.pkl
+
+# --- Split map and stats ---
+model_B22_split_map:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B22/split_map.json
+
+model_B22_split_stats:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B22/split_stats.json
+
+# --- Train/Val splits ---
+model_B22_train_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B22/train_tensor.pkl
+
+model_B22_val_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B22/val_tensor.pkl
+
+# --- Trained outputs (final) ---
+model_B22_state_dict:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/model_B22/state_dict.pt
+  versioned: true
+
+model_B22_tokenizer_spec_saved:
+  type: json.JSONDataSet
+  filepath: data/06_models/model_B22/tokenizer_spec.json
+  versioned: true
+
+# --- Model outputs ---
+model_B22_prompted_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_B22/prompted_samples.json
+  versioned: true
+
+model_B22_report:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B22/report.json
+  versioned: true
+
+model_B22_metadata:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B22/metadata.json
+  versioned: true

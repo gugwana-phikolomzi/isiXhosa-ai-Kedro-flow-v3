@@ -1,0 +1,69 @@
+# ===============================
+# Catalog for model B21 (CASED)
+# ===============================
+
+# --- Input corpus (from dataset_prep_reclean) ---
+model_B21_raw_corpus:
+  type: text.TextDataSet
+  filepath: data/01_raw/b2.1_combined.jsonl
+
+# --- Intermediates ---
+model_B21_corpus_text:
+  type: MemoryDataSet
+
+model_B21_tokenizer_spec:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B21/tokenizer_spec.json
+
+model_B21_char_vocab:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B21/char_vocab.json
+
+model_B21_encoded_corpus:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_B21/encoded_corpus.pkl
+
+# --- Split map and stats ---
+model_B21_split_map:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B21/split_map.json
+
+model_B21_split_stats:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B21/split_stats.json
+
+# --- Train/Val splits ---
+model_B21_train_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B21/train_tensor.pkl
+
+model_B21_val_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B21/val_tensor.pkl
+
+# --- Trained outputs (final) ---
+model_B21_state_dict:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/model_B21/state_dict.pt
+  versioned: true
+
+model_B21_tokenizer_spec_saved:
+  type: json.JSONDataSet
+  filepath: data/06_models/model_B21/tokenizer_spec.json
+  versioned: true
+
+# --- Model outputs ---
+model_B21_prompted_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_B21/prompted_samples.json
+  versioned: true
+
+model_B21_report:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B21/report.json
+  versioned: true
+
+model_B21_metadata:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B21/metadata.json
+  versioned: true

@@ -12,6 +12,8 @@ from typing import Dict, Tuple, List, Any
 import torch
 import torch.nn.functional as F
 from torch import nn
+import json, random
+from collections import defaultdict
 
 # Import your model + helpers
 from .gpt import GPT, GPTConfig, configure_adamw, EMA, num_parameters
@@ -52,14 +54,144 @@ def encode_corpus(corpus_text: str, tokenizer_spec: Dict[str, Any], params: Dict
     return torch.tensor(ids, dtype=torch.long)
 
 
-def make_train_val_tensors(encoded_corpus: torch.Tensor, params: Dict[str, Any]) -> Tuple[torch.Tensor, torch.Tensor]:
-    """Split a single long tensor of token IDs into train/val 1D tensors."""
-    frac = float(params.get("train_frac", 0.9))
-    n = encoded_corpus.numel()
-    n_train = int(n * frac)
-    train = encoded_corpus[:n_train].contiguous()
-    val = encoded_corpus[n_train:].contiguous()
-    return train, val
+# def make_train_val_tensors(encoded_corpus: torch.Tensor, params: Dict[str, Any]) -> Tuple[torch.Tensor, torch.Tensor]:
+#     """Split a single long tensor of token IDs into train/val 1D tensors."""
+#     frac = float(params.get("train_frac", 0.9))
+#     n = encoded_corpus.numel()
+#     n_train = int(n * frac)
+#     train = encoded_corpus[:n_train].contiguous()
+#     val = encoded_corpus[n_train:].contiguous()
+#     return train, val
+def make_train_val_tensors(
+    encoded_corpus,
+    params: Dict[str, Any],
+    split_map: Dict[str, str] | None = None,   # optional: {doc_id: "train"/"val"}
+) -> Tuple[torch.Tensor, torch.Tensor]:
+    """
+    Backward-compatible splitter.
+
+    If 'encoded_corpus' is a plain 1D tensor (B2-style), do the original
+    contiguous split by 'train_frac'.
+
+    If 'encoded_corpus' is the dict produced by encode_corpus(corpus_format="jsonl"),
+    and 'split_map' is provided, build train/val by concatenating full documents,
+    inserting EOS *between docs only*. This prevents leakage and respects groups.
+
+    Optional eval nicety:
+      If params['eval_strip_first_line'] is True, we remove the first line
+      (up to the first newline byte) from each *val* document before concatenation.
+      This is useful when your docs begin with a tag header like "<NEWS>\n".
+    """
+    # Legacy path: single tensor -> fractional split
+    if isinstance(encoded_corpus, torch.Tensor):
+        frac = float(params.get("train_frac", 0.9))
+        n = encoded_corpus.numel()
+        n_train = int(n * frac)
+        train = encoded_corpus[:n_train].contiguous()
+        val = encoded_corpus[n_train:].contiguous()
+        return train, val
+
+    # Dict path (JSONL-aware)
+    assert isinstance(encoded_corpus, dict), "encoded_corpus must be Tensor or dict"
+    ids_tensor: torch.Tensor = encoded_corpus["ids"]
+    docs: List[List[int]] = encoded_corpus.get("docs", [])
+    doc_ids: List[str] = encoded_corpus.get("doc_ids", [])
+    add_st: bool = bool(encoded_corpus.get("add_special_tokens", True))
+
+    # If no split_map was provided, fall back to fractional split on flat tensor
+    if not split_map:
+        frac = float(params.get("train_frac", 0.9))
+        n = ids_tensor.numel()
+        n_train = int(n * frac)
+        train = ids_tensor[:n_train].contiguous()
+        val = ids_tensor[n_train:].contiguous()
+        return train, val
+
+    # Build train/val streams by whole docs
+    # Special tokens: we will *not* add BOS per doc; we only insert EOS between docs.
+    eos_id = None
+    if add_st:
+        # Recreate eos_id from tokenizer spec assumptions:
+        # build_tokenizer_spec sets eos_id = 257 when add_special_tokens=True
+        eos_id = 257
+
+    strip_tag_header = bool(params.get("eval_strip_first_line", False))
+
+    train_flat: List[int] = []
+    val_flat: List[int] = []
+
+    for di, did in zip(docs, doc_ids):
+        split = str(split_map.get(did, "train")).lower()  # default to train if missing
+        # Optionally strip first line (header tag) for *validation* only
+        di_use = di
+        if strip_tag_header and split == "val":
+            # remove bytes up to and including the first '\n' (0x0A)
+            try:
+                nl = di.index(10)  # byte value for '\n'
+                di_use = di[nl + 1 :]
+            except ValueError:
+                di_use = di  # no newline -> leave as-is
+
+        if split == "val":
+            val_flat.extend(di_use)
+            if eos_id is not None:
+                val_flat.append(eos_id)
+        else:
+            train_flat.extend(di_use)
+            if eos_id is not None:
+                train_flat.append(eos_id)
+
+    train_tensor = torch.tensor(train_flat, dtype=torch.long)
+    val_tensor = torch.tensor(val_flat, dtype=torch.long)
+    return train_tensor, val_tensor
+
+def make_grouped_split_map(
+    raw_jsonl: str,   # the combined JSONL string
+    params: dict
+) -> tuple[dict, dict]:
+    """
+    Build a grouped, stratified train/val split map for B21.
+
+    Returns:
+      - split_map: {doc_id: "train"/"val"}
+      - stats: split stats for reporting
+    """
+    train_frac = float(params.get("train_frac", 0.9))
+    seed = int(params.get("seed", 1337))
+    random.seed(seed)
+
+    lines = [l for l in raw_jsonl.splitlines() if l.strip()]
+    docs = [json.loads(l) for l in lines]
+
+    # group keys: Bible → section; News → url (fallback id)
+    grouped = defaultdict(list)
+    for d in docs:
+        domain = d.get("domain")
+        if domain == "BIBLE":
+            key = d.get("section")
+        else:
+            key = d.get("url") or d.get("id")
+        grouped[(domain, key)].append(d)
+
+    split_map = {}
+    stats = {"train": {"NEWS": 0, "BIBLE": 0}, "val": {"NEWS": 0, "BIBLE": 0}}
+
+    for domain in ["NEWS", "BIBLE"]:
+        groups = [g for g in grouped if g[0] == domain]
+        random.shuffle(groups)
+        cut = int(len(groups) * train_frac)
+        train_g, val_g = groups[:cut], groups[cut:]
+        for g in train_g:
+            for d in grouped[g]:
+                split_map[d["id"]] = "train"
+                stats["train"][domain] += 1
+        for g in val_g:
+            for d in grouped[g]:
+                split_map[d["id"]] = "val"
+                stats["val"][domain] += 1
+
+    stats["total"] = {"train": sum(stats["train"].values()), "val": sum(stats["val"].values())}
+    return split_map, stats
 
 
 # ---------- 2) Training / evaluation utilities ----------
