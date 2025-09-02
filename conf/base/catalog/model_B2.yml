@@ -42,6 +42,11 @@ model_B2_tokenizer_spec_saved:
   versioned: true
 
 # --- Model outputs ---
+
+model_B2_random_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_B2/random_samples.json
+
 model_B2_prompted_samples:
   type: json.JSONDataSet
   filepath: data/07_model_output/model_B2/prompted_samples.json

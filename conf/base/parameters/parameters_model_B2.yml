@@ -16,8 +16,6 @@ model_B2:
 
   eval_interval: 250
   eval_iters: 40
-  sample_tokens: 150
-  sample_prompts: ["Molo ", "Ulwimi lwesiXhosa "]
 
   learning_rate: 0.0006
   weight_decay: 0.10
@@ -49,3 +47,24 @@ model_B2:
 
   early_stopping: { enabled: true, patience_evals: 5, min_improve_pct: 1.0, min_delta_abs: 0.0 }
   seed: 1337
+
+
+
+
+
+  sample_tokens: 150
+  sample_top_p: 0.90
+  sample_top_k: 50
+  sample_random_temperature: 0.8
+  sample_prompt_temperature: 0.7
+  sample_prompt_seed: 333
+  sample_random_pairs:
+    - [0.7, 111]
+    - [0.9, 222]
+    - [0.7, 333]
+    - [0.9, 444]
+  sample_prompts:
+    - "abantu baseMpuma Koloni"
+    - "Iintaba zaseDrakensberg zibonakala"
+    - "UMphathiswa wezempilo uchaze ukuba"
+    - "Ingoma yesintu iqala"

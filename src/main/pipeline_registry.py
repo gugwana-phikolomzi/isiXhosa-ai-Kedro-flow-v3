@@ -15,10 +15,16 @@ from .pipelines import (
     model_B1,
     model_B2,
     model_B21,
+    model_b211,
+    model_b212,
+    model_b213,
+    model_b214,
     model_B22,
     model_C0,
     model_C1,
-    reporting
+
+    model_D0,
+    reporting,
 )
 
 
@@ -41,9 +47,15 @@ def register_pipelines() -> dict[str, Pipeline]:
         "model_B1": model_B1.create_pipeline(),
         "model_B2": model_B2.create_pipeline(),
         "model_B21": model_B21.create_pipeline(),
+        "model_b211": model_b211.create_pipeline(),
+        "model_b212": model_b212.create_pipeline(),
+        "model_b213": model_b213.create_pipeline(),
+        "model_b214": model_b214.create_pipeline(),
         "model_B22": model_B22.create_pipeline(),
         "model_C0": model_C0.create_pipeline(),
         "model_C1": model_C1.create_pipeline(),
+
+        "model_D0":model_D0.create_pipeline(),
         "reporting": reporting.create_pipeline(),
     }
 

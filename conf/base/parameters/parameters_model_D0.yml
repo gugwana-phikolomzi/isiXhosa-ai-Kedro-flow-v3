@@ -1,0 +1,101 @@
+model_D0:
+  experiment_id: "D0"
+  tokenizer: { type: "byte", add_special_tokens: true }
+  train_frac: 0.9
+  block_size: 512
+
+  # (NEW) For compute_packer_stats histograms (optional)
+  doc_len_hist_bins: [64, 128, 192, 256, 384, 512, 768, 1024]
+
+  # Capacity bump vs B213
+  n_layer: 6
+  n_head: 8
+  n_embd: 512
+  dropout: 0.10
+
+  # Keep training budget comparable to B213
+  batch_size: 1
+  grad_accum_steps: 8
+  max_iters: 20000
+  target_total_steps: null
+
+  # Eval cadence
+  eval_interval: 250
+  eval_iters: 40
+
+  # Optimizer + schedule
+  learning_rate: 0.0006
+  weight_decay: 0.10
+  grad_clip_norm: 1.0
+  adam_beta2: 0.95
+  adam_eps: 1.0e-8
+  no_decay_patterns: ["bias","LayerNorm.weight","norm.weight","embedding","emb.weight"]
+
+  # EMA (slightly stronger than B213)
+  ema: { enabled: true, decay: 0.9995, start_step: 1000, eval_with_ema: true }
+
+  lr_schedule: "cosine"
+  warmup_steps: 400
+  min_lr: 0.00006        # 10% of peak LR to stabilize tail
+
+  device_auto_cuda: false
+  torch_threads: 6
+
+  # IO / logging
+  checkpoint_interval: 500
+  checkpoint_dir: "data/06_models/D0/checkpoints"
+  checkpoint_prefix: "D0"
+  resume: { enabled: false, path: null }
+  metrics_jsonl_path: "data/08_reporting/D0/metrics.jsonl"
+  metrics_csv_path:  "data/08_reporting/D0/metrics.csv"
+
+  # Early stopping same as B213
+  early_stopping: { enabled: true, patience_evals: 5, min_improve_pct: 1.0, min_delta_abs: 0.0 }
+
+  seed: 1337
+  corpus_format: "jsonl"
+  eval_strip_first_line: true
+
+  # === Sampling (decoding guardrails) ===
+  sample_tokens: 150
+  sample_top_p: 0.93
+  sample_top_k: 50
+  sample_random_temperature: 0.8
+  sample_prompt_temperature: 0.75
+  sample_repetition_penalty: 1.10      # (present; implement if you choose)
+  sample_no_repeat_ngram_size: 3        # (present; implement if you choose)
+  sample_prompt_seed: 333
+  # sampler_use_legal_starts: false     # (optional) flip to true after wiring legal-starts in _get_batch
+
+  sample_random_pairs:
+    - [0.8, 111]
+    - [0.9, 222]
+    - [0.8, 333]
+    - [0.9, 444]
+  sample_prompts:
+    - "abantu baseMpuma Koloni"
+    - "Iintaba zaseDrakensberg zibonakala"
+    - "UMphathiswa wezempilo uchaze ukuba"
+    - "Ingoma yesintu iqala"
+
+  # === Packer (tight for 512) ===
+  packer:
+    train_frac: 0.9
+    block_size: 512
+    add_eos_between_docs: true
+    shuffle_docs: true
+    seed: 1337
+
+    # fill/length control
+    min_fill_ratio: 0.60
+    max_fill_ratio: 0.90
+    max_docs_per_pack: 3
+    min_segment_tokens: 32
+    target_chunk_tokens: 380
+    split_overlap: 32
+    bucket_edges: [64, 128, 256, 384, 512, 768, 1024]
+
+    # report packer KPIs (purely informational for your logs)
+    report_utilization: true
+    report_shortpack_threshold_ratio: 0.30
+    report_truncation: true

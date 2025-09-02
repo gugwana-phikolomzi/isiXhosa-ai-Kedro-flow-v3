@@ -1,8 +1,8 @@
-model_B22:
-  experiment_id: "B22"
+model_B211:
+  experiment_id: "B211"
   tokenizer: { type: "byte", add_special_tokens: true }
   train_frac: 0.9
-  block_size: 192
+  block_size: 256
   n_layer: 4
   n_head: 6
   n_embd: 384
@@ -26,14 +26,14 @@ model_B22:
   device_auto_cuda: false
   torch_threads: 6
   checkpoint_interval: 500
-  checkpoint_dir: "data/06_models/B22/checkpoints"
-  checkpoint_prefix: "B22"
+  checkpoint_dir: "data/06_models/B211/checkpoints"
+  checkpoint_prefix: "B211"
   resume: { enabled: false, path: null }
-  metrics_jsonl_path: "data/08_reporting/B22/metrics.jsonl"
-  metrics_csv_path:  "data/08_reporting/B22/metrics.csv"
+  metrics_jsonl_path: "data/08_reporting/B211/metrics.jsonl"
+  metrics_csv_path:  "data/08_reporting/B211/metrics.csv"
   early_stopping: { enabled: true, patience_evals: 5, min_improve_pct: 1.0, min_delta_abs: 0.0 }
   seed: 1337
-  corpus_format: "jsonl"
+  corpus_format: "jsonl"            # legacy, harmless
   eval_strip_first_line: true
   sample_tokens: 150
   sample_top_p: 0.90
@@ -52,7 +52,7 @@ model_B22:
     - "UMphathiswa wezempilo uchaze ukuba"
     - "Ingoma yesintu iqala"
 
-  packer:                 # <-- moved under model_B22
+  packer:                 # <-- moved under model_B211
     train_frac: 0.9
     block_size: 192
     add_eos_between_docs: true

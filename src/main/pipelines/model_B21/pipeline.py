@@ -1,63 +1,52 @@
+# src/main/pipelines/model_B2/pipeline.py
 from kedro.pipeline import Pipeline, node, pipeline
 from ..model_common.nodes import (
-    make_corpus_text,
     build_tokenizer_spec,
-    encode_corpus,
-    make_grouped_split_map,      # <-- ensure this is available
-    make_train_val_tensors,
+    pack_corpus_from_txt_single,   # NEW
     train_model,
-    generate_prompted_samples,
+    generate_samples_split,
     build_report,
 )
 
 def create_pipeline(**kwargs) -> Pipeline:
-    mid = "B21"; P = f"params:model_{mid}"
+    mid = "B21"  # keep as-is if this pipeline is for B21
+    P = f"params:model_{mid}"
     return pipeline([
+        # 1) Tokenizer spec (doesn't really need the text, but signature expects it)
         node(
-            make_corpus_text,
-            inputs=[f"model_{mid}_raw_corpus", P],
-            outputs=f"model_{mid}_corpus_text",
-            name=f"{mid}_corpus_text",
-        ),
-        node(
-            build_tokenizer_spec,
-            inputs=[f"model_{mid}_corpus_text", P],
+            func=build_tokenizer_spec,
+            inputs=[f"text_only_txt_cased", P],   # pass the combined TXT
             outputs=f"model_{mid}_tokenizer_spec",
             name=f"{mid}_tok_spec",
         ),
+
+        # 2) PACKER: TXT -> (train_tensor, val_tensor) + stats
         node(
-            encode_corpus,
-            inputs=[f"model_{mid}_corpus_text", f"model_{mid}_tokenizer_spec", P],
-            outputs=f"model_{mid}_encoded_corpus",
-            name=f"{mid}_encode",
+            func=pack_corpus_from_txt_single,
+            inputs=["text_only_txt_cased", f"model_{mid}_tokenizer_spec", P],
+            outputs=[f"model_{mid}_train_tensor", f"model_{mid}_val_tensor", f"model_{mid}_packer_stats"],
+            name=f"{mid}_pack_txt",
         ),
-        # Build the grouped, stratified split map BEFORE making tensors
+
+        # 3) Train
         node(
-            make_grouped_split_map,
-            inputs=[f"model_{mid}_raw_corpus", P],
-            outputs=[f"model_{mid}_split_map", f"model_{mid}_split_stats"],
-            name=f"{mid}_splitmap",
-        ),
-        node(
-            make_train_val_tensors,
-            inputs=[f"model_{mid}_encoded_corpus", P, f"model_{mid}_split_map"],
-            outputs=[f"model_{mid}_train_tensor", f"model_{mid}_val_tensor"],
-            name=f"{mid}_splits",
-        ),
-        node(
-            train_model,
+            func=train_model,
             inputs=[f"model_{mid}_train_tensor", f"model_{mid}_val_tensor", f"model_{mid}_tokenizer_spec", P],
             outputs=f"model_{mid}_state_dict",
             name=f"{mid}_train",
         ),
+
+        # 4) Samples (random + prompted)
         node(
-            generate_prompted_samples,
+            func=generate_samples_split,
             inputs=[f"model_{mid}_state_dict", f"model_{mid}_tokenizer_spec", P],
-            outputs=f"model_{mid}_prompted_samples",
+            outputs=[f"model_{mid}_random_samples", f"model_{mid}_prompted_samples"],
             name=f"{mid}_samples",
         ),
+
+        # 5) Report
         node(
-            build_report,
+            func=build_report,
             inputs=[f"model_{mid}_state_dict", f"model_{mid}_prompted_samples", P],
             outputs=f"model_{mid}_report",
             name=f"{mid}_report",

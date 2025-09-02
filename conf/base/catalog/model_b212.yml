@@ -1,0 +1,98 @@
+# ===============================
+# Catalog for model B212 (CASED)
+# ===============================
+
+# --- Input corpus (from dataset_prep_reclean) ---
+# ========= B212 (CASED) — single TXT input =========
+model_B212_text_only_txt_cased:
+  type: kedro.extras.datasets.text.TextDataSet
+  filepath: data/01_raw/cased.txt
+
+# ========= B212 (CASED) — outputs from the packer =========
+model_B212_train_X_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B212/train_X.pkl
+
+model_B212_train_Y_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B212/train_Y.pkl
+
+model_B212_val_X_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B212/val_X.pkl
+
+model_B212_val_Y_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B212/val_Y.pkl
+
+model_B212_packer_stats_cased:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B212/packer_stats.json
+
+
+# --- Intermediates ---
+model_B212_corpus_text:
+  type: MemoryDataSet
+
+model_B212_tokenizer_spec:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B212/tokenizer_spec.json
+
+model_B212_char_vocab:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B212/char_vocab.json
+
+model_B212_encoded_corpus:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_B212/encoded_corpus.pkl
+
+# --- Split map and stats ---
+model_B212_split_map:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_B212/split_map.json
+
+model_B212_split_stats:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B212/split_stats.json
+
+# --- Train/Val splits ---
+model_B212_train_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B212/train_tensor.pkl
+
+model_B212_val_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B212/val_tensor.pkl
+
+# --- Trained outputs (final) ---
+model_B212_state_dict:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/model_B212/state_dict.pt
+  versioned: true
+
+model_B212_tokenizer_spec_saved:
+  type: json.JSONDataSet
+  filepath: data/06_models/model_B212/tokenizer_spec.json
+  versioned: true
+
+# --- Model outputs ---
+
+model_B212_random_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_B212/random_samples.json
+
+model_B212_prompted_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_B212/prompted_samples.json
+  versioned: true
+
+
+model_B212_report:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B212/report.json
+  versioned: true
+
+model_B212_metadata:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B212/metadata.json
+  versioned: true

@@ -1,0 +1,112 @@
+# ===============================
+# Catalog for model D0 (CASED)
+# ===============================
+
+# ========= Inputs =========
+# (legacy single-TXT input; keep if you still run that path)
+model_D0_text_only_txt_cased:
+  type: kedro.extras.datasets.text.TextDataSet
+  filepath: data/01_raw/cased.txt
+
+# Produced by adapter (txt_to_docs_list); consumed by packer + diagnostics
+model_D0_all_clean_docs:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_D0/all_clean_docs.json
+
+# ========= Tokenizer / Intermediates =========
+model_D0_tokenizer_spec:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_D0/tokenizer_spec.json
+
+# (Optional legacy intermediates; safe to remove if unused)
+model_D0_corpus_text:
+  type: MemoryDataSet
+model_D0_char_vocab:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_D0/char_vocab.json
+model_D0_encoded_corpus:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_D0/encoded_corpus.pkl
+
+# ========= NEW: Pre-pack diagnostics =========
+# Byte-id encoded docs (for compute_packer_stats input)
+model_D0_encoded_docs_for_stats:
+  type: pickle.PickleDataSet
+  filepath: data/02_intermediate/model_D0/encoded_docs_for_stats.pkl
+
+# JSON with diagnostic stats based on raw doc lengths vs block_size (no packing)
+model_D0_packer_stats_diag:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_D0/packer_stats_diag.json
+  save_args:
+    ensure_ascii: false
+    indent: 2
+
+# ========= Packer outputs (train/val + runtime stats) =========
+model_D0_train_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_D0/train_tensor.pkl
+
+model_D0_val_tensor:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_D0/val_tensor.pkl
+
+model_D0_packer_stats:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_D0/packer_stats.json
+  save_args:
+    ensure_ascii: false
+    indent: 2
+
+# (Legacy B2-style XY outputs; keep only if some code still expects them)
+model_D0_train_X_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_D0/train_X.pkl
+model_D0_train_Y_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_D0/train_Y.pkl
+model_D0_val_X_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_D0/val_X.pkl
+model_D0_val_Y_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_D0/val_Y.pkl
+
+# ========= (Optional) Grouped split artifacts =========
+model_D0_split_map:
+  type: json.JSONDataSet
+  filepath: data/02_intermediate/model_D0/split_map.json
+model_D0_split_stats:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_D0/split_stats.json
+
+# ========= Trained model artifacts =========
+model_D0_state_dict:
+  type: pickle.PickleDataSet
+  filepath: data/06_models/model_D0/state_dict.pt
+  versioned: true
+
+model_D0_tokenizer_spec_saved:
+  type: json.JSONDataSet
+  filepath: data/06_models/model_D0/tokenizer_spec.json
+  versioned: true
+
+# ========= Model outputs (generations & report) =========
+model_D0_random_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_D0/random_samples.json
+
+model_D0_prompted_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_D0/prompted_samples.json
+  versioned: true
+
+model_D0_report:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_D0/report.json
+  versioned: true
+
+model_D0_metadata:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_D0/metadata.json
+  versioned: true

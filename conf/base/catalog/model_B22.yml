@@ -3,9 +3,30 @@
 # ===============================
 
 # --- Input corpus (from dataset_prep_reclean) ---
-model_B22_raw_corpus:
-  type: text.TextDataSet
-  filepath: data/01_raw/b2.2_combined_allcaps.jsonl
+text_only_txt_caps:
+  type: kedro.extras.datasets.text.TextDataSet
+  filepath: data/01_raw/caps.txt
+
+# ========= B22 (ALL-CAPS) =========
+train_X_caps:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B22/train_X.pkl
+
+train_Y_caps:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B22/train_Y.pkl
+
+val_X_caps:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B22/val_X.pkl
+
+val_Y_caps:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B22/val_Y.pkl
+
+packer_stats_caps:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B22/packer_stats.json
 
 # --- Intermediates ---
 model_B22_corpus_text:
@@ -53,10 +74,16 @@ model_B22_tokenizer_spec_saved:
   versioned: true
 
 # --- Model outputs ---
+
+model_B22_random_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_B22/random_samples.json
+
 model_B22_prompted_samples:
   type: json.JSONDataSet
   filepath: data/07_model_output/model_B22/prompted_samples.json
   versioned: true
+
 
 model_B22_report:
   type: json.JSONDataSet

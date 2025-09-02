@@ -3,9 +3,32 @@
 # ===============================
 
 # --- Input corpus (from dataset_prep_reclean) ---
-model_B21_raw_corpus:
-  type: text.TextDataSet
-  filepath: data/01_raw/b2.1_combined.jsonl
+# ========= B21 (CASED) — single TXT input =========
+text_only_txt_cased:
+  type: kedro.extras.datasets.text.TextDataSet
+  filepath: data/01_raw/cased.txt
+
+# ========= B21 (CASED) — outputs from the packer =========
+train_X_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B21/train_X.pkl
+
+train_Y_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B21/train_Y.pkl
+
+val_X_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B21/val_X.pkl
+
+val_Y_cased:
+  type: pickle.PickleDataSet
+  filepath: data/03_primary/model_B21/val_Y.pkl
+
+packer_stats_cased:
+  type: json.JSONDataSet
+  filepath: data/08_reporting/model_B21/packer_stats.json
+
 
 # --- Intermediates ---
 model_B21_corpus_text:
@@ -53,10 +76,16 @@ model_B21_tokenizer_spec_saved:
   versioned: true
 
 # --- Model outputs ---
+
+model_B21_random_samples:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/model_B21/random_samples.json
+
 model_B21_prompted_samples:
   type: json.JSONDataSet
   filepath: data/07_model_output/model_B21/prompted_samples.json
   versioned: true
+
 
 model_B21_report:
   type: json.JSONDataSet

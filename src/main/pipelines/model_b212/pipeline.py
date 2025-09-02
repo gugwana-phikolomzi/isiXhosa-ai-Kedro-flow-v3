@@ -9,7 +9,7 @@ from ..model_common.nodes import (
 )
 
 def create_pipeline(**kwargs) -> Pipeline:
-    mid = "B22"  # keep as-is if this pipeline is for B21
+    mid = "B212"  # keep as-is if this pipeline is for B21
     P = f"params:model_{mid}"
     return pipeline([
         # 1) Tokenizer spec (doesn't really need the text, but signature expects it)
